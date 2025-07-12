@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
@@ -6,6 +6,11 @@ import { jwtDecode } from 'jwt-decode';
 import Login from '../components/login/Login';
 import Sidebar from '../components/sidebar/Sidebar';
 import Work from '../components/work/Work';
+import HomeTask from '../components/home/Home';
+import Private from '../components/private/Private';
+import Studies from '../components/studies/Studies';
+import Weekly from '../components/weekly/Weekly';
+import All from '../components/all/All';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -16,7 +21,11 @@ const ProtectedRoute = ({ children }) => {
     toast.error('Пожалуйста, войдите в систему', {
       position: 'top-center',
       autoClose: 3000,
-      style: { background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Inter, sans-serif' },
+      style: {
+        background: '#1a1a1a',
+        color: '#ffffff',
+        fontFamily: 'Inter, Roboto, sans-serif',
+      },
     });
     return <Navigate to="/login" />;
   }
@@ -30,7 +39,11 @@ const ProtectedRoute = ({ children }) => {
       toast.error('Сессия истекла. Пожалуйста, войдите снова.', {
         position: 'top-center',
         autoClose: 3000,
-        style: { background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Inter, sans-serif' },
+        style: {
+          background: '#1a1a1a',
+          color: '#ffffff',
+          fontFamily: 'Inter, Roboto, sans-serif',
+        },
       });
       return <Navigate to="/login" />;
     }
@@ -41,7 +54,11 @@ const ProtectedRoute = ({ children }) => {
     toast.error('Ошибка токена. Пожалуйста, войдите снова.', {
       position: 'top-center',
       autoClose: 3000,
-      style: { background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Inter, sans-serif' },
+      style: {
+        background: '#1a1a1a',
+        color: '#ffffff',
+        fontFamily: 'Inter, Roboto, sans-serif',
+      },
     });
     return <Navigate to="/login" />;
   }
@@ -60,8 +77,9 @@ const ContentArea = styled.div`
   flex: 1;
   margin-left: 250px;
   padding: 2rem;
-  background: #FFFFFF;
+  background: #ffffff;
   color: #000000;
+  font-family: 'Inter', 'Roboto', sans-serif;
   @media (max-width: 768px) {
     margin-left: 0;
     margin-bottom: 60px;
@@ -70,18 +88,6 @@ const ContentArea = styled.div`
 `;
 
 const AppRoutes = () => {
-  const [activeCategory, setActiveCategory] = useState('Все');
-
-  const renderContent = () => {
-    console.log('AppRoutes.jsx - Rendering category:', activeCategory);
-    switch (activeCategory) {
-      case 'Работа':
-        return <Work />;
-      default:
-        return <div>Выберите категорию</div>;
-    }
-  };
-
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -90,8 +96,88 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <AppLayout>
-              <Sidebar setActiveCategory={setActiveCategory} />
-              <ContentArea>{renderContent()}</ContentArea>
+              <Sidebar />
+              <ContentArea>
+                <div>Выберите категорию</div>
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/work"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <Work />
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <HomeTask />
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/personal"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <Private />
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/study"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <Studies />
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/weekly"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <Weekly />
+              </ContentArea>
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/all"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Sidebar />
+              <ContentArea>
+                <All />
+              </ContentArea>
             </AppLayout>
           </ProtectedRoute>
         }

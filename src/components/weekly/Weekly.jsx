@@ -19,7 +19,7 @@ import TitleIcon from '@mui/icons-material/Title';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-const WorkContainer = styled(Box)`
+const WeeklyContainer = styled(Box)`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -267,7 +267,7 @@ const LoadingContainer = styled(Box)`
   padding: 2rem;
 `;
 
-const Work = () => {
+const Weekly = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
   const [loading, setLoading] = useState(false);
@@ -276,17 +276,17 @@ const Work = () => {
   const API_URL = 'https://timely-server-puce.vercel.app/api';
 
   const token = localStorage.getItem('token');
-  console.log('Work.jsx - Token:', token);
+  console.log('Weekly.jsx - Token:', token);
 
   useEffect(() => {
     let user = null;
     if (token) {
       try {
         user = jwtDecode(token);
-        console.log('Work.jsx - Decoded user:', user);
+        console.log('Weekly.jsx - Decoded user:', user);
         const currentTime = Date.now() / 1000;
         if (user.exp < currentTime) {
-          console.log('Work.jsx - Token expired:', user.exp, currentTime);
+          console.log('Weekly.jsx - Token expired:', user.exp, currentTime);
           localStorage.removeItem('token');
           toast.error('Сессия истекла. Пожалуйста, войдите снова.', {
             position: 'top-center',
@@ -298,7 +298,7 @@ const Work = () => {
           setIsAuthenticated(true);
         }
       } catch (err) {
-        console.error('Work.jsx - Invalid token:', err);
+        console.error('Weekly.jsx - Invalid token:', err);
         localStorage.removeItem('token');
         toast.error('Ошибка токена. Пожалуйста, войдите снова.', {
           position: 'top-center',
@@ -308,7 +308,7 @@ const Work = () => {
         navigate('/login');
       }
     } else {
-      console.log('Work.jsx - No token found, redirecting to login');
+      console.log('Weekly.jsx - No token found, redirecting to login');
       toast.error('Пожалуйста, войдите в систему', {
         position: 'top-center',
         autoClose: 3000,
@@ -321,7 +321,7 @@ const Work = () => {
       if (!user) return;
       const userEmail = user.email || '';
       if (!userEmail) {
-        console.log('Work.jsx - No user email, redirecting to login');
+        console.log('Weekly.jsx - No user email, redirecting to login');
         toast.error('Пользователь не авторизован', {
           position: 'top-center',
           autoClose: 3000,
@@ -332,17 +332,17 @@ const Work = () => {
       }
       setLoading(true);
       try {
-        console.log('Work.jsx - Fetching tasks from:', `${API_URL}/tasks?category=Работа`);
-        const response = await fetch(`${API_URL}/tasks?category=Работа`, {
+        console.log('Weekly.jsx - Fetching tasks from:', `${API_URL}/tasks?category=Недельный`);
+        const response = await fetch(`${API_URL}/tasks?category=Недельный`, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
-        console.log('Work.jsx - Fetch response status:', response.status);
+        console.log('Weekly.jsx - Fetch response status:', response.status);
         if (!response.ok) {
           const data = await response.json();
-          console.log('Work.jsx - Fetch error response:', data);
+          console.log('Weekly.jsx - Fetch error response:', data);
           if (response.status === 401) {
             localStorage.removeItem('token');
             setIsAuthenticated(false);
@@ -359,7 +359,7 @@ const Work = () => {
         const data = await response.json();
         setTasks(data);
       } catch (err) {
-        console.error('Work.jsx - Fetch error:', err.message);
+        console.error('Weekly.jsx - Fetch error:', err.message);
         toast.error(err.message === 'Failed to fetch' ? 'Не удалось подключиться к серверу. Проверьте, работает ли сервер.' : err.message || 'Ошибка при загрузке задач', {
           position: 'top-center',
           autoClose: 3000,
@@ -380,7 +380,7 @@ const Work = () => {
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      console.log('Work.jsx - Not authenticated in handleAddTask, redirecting to login');
+      console.log('Weekly.jsx - Not authenticated in handleAddTask, redirecting to login');
       toast.error('Пользователь не авторизован', {
         position: 'top-center',
         autoClose: 3000,
@@ -400,7 +400,7 @@ const Work = () => {
     const user = token ? jwtDecode(token) : null;
     const userEmail = user?.email || '';
     if (!userEmail) {
-      console.log('Work.jsx - No user email in handleAddTask, redirecting to login');
+      console.log('Weekly.jsx - No user email in handleAddTask, redirecting to login');
       toast.error('Пользователь не авторизован', {
         position: 'top-center',
         autoClose: 3000,
@@ -411,19 +411,19 @@ const Work = () => {
     }
     setLoading(true);
     try {
-      console.log('Work.jsx - Adding task to:', `${API_URL}/tasks`);
+      console.log('Weekly.jsx - Adding task to:', `${API_URL}/tasks`);
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ ...newTask, category: 'Работа', userEmail }),
+        body: JSON.stringify({ ...newTask, category: 'Недельный', userEmail }),
       });
-      console.log('Work.jsx - Add task response status:', response.status);
+      console.log('Weekly.jsx - Add task response status:', response.status);
       if (!response.ok) {
         const data = await response.json();
-        console.log('Work.jsx - Add task error response:', data);
+        console.log('Weekly.jsx - Add task error response:', data);
         if (response.status === 401) {
           localStorage.removeItem('token');
           setIsAuthenticated(false);
@@ -446,7 +446,7 @@ const Work = () => {
         style: { background: '#1a1a1a', color: '#ffffff', fontFamily: 'Inter, Roboto, sans-serif' },
       });
     } catch (err) {
-      console.error('Work.jsx - Add task error:', err.message);
+      console.error('Weekly.jsx - Add task error:', err.message);
       toast.error(err.message === 'Failed to fetch' ? 'Не удалось подключиться к серверу. Проверьте, работает ли сервер.' : err.message || 'Ошибка при добавлении задачи', {
         position: 'top-center',
         autoClose: 3000,
@@ -459,7 +459,7 @@ const Work = () => {
 
   const handleDeleteTask = async (id) => {
     if (!isAuthenticated) {
-      console.log('Work.jsx - Not authenticated in handleDeleteTask, redirecting to login');
+      console.log('Weekly.jsx - Not authenticated in handleDeleteTask, redirecting to login');
       toast.error('Пользователь не авторизован', {
         position: 'top-center',
         autoClose: 3000,
@@ -471,7 +471,7 @@ const Work = () => {
     const user = token ? jwtDecode(token) : null;
     const userEmail = user?.email || '';
     if (!userEmail) {
-      console.log('Work.jsx - No user email in handleDeleteTask, redirecting to login');
+      console.log('Weekly.jsx - No user email in handleDeleteTask, redirecting to login');
       toast.error('Пользователь не авторизован', {
         position: 'top-center',
         autoClose: 3000,
@@ -482,15 +482,15 @@ const Work = () => {
     }
     setLoading(true);
     try {
-      console.log('Work.jsx - Deleting task from:', `${API_URL}/tasks/${id}`);
+      console.log('Weekly.jsx - Deleting task from:', `${API_URL}/tasks/${id}`);
       const response = await fetch(`${API_URL}/tasks/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Work.jsx - Delete task response status:', response.status);
+      console.log('Weekly.jsx - Delete task response status:', response.status);
       if (!response.ok) {
         const data = await response.json();
-        console.log('Work.jsx - Delete task error response:', data);
+        console.log('Weekly.jsx - Delete task error response:', data);
         if (response.status === 401) {
           localStorage.removeItem('token');
           setIsAuthenticated(false);
@@ -511,7 +511,7 @@ const Work = () => {
         style: { background: '#1a1a1a', color: '#ffffff', fontFamily: 'Inter, Roboto, sans-serif' },
       });
     } catch (err) {
-      console.error('Work.jsx - Delete task error:', err.message);
+      console.error('Weekly.jsx - Delete task error:', err.message);
       toast.error(err.message === 'Failed to fetch' ? 'Не удалось подключиться к серверу. Проверьте, работает ли сервер.' : err.message || 'Ошибка при удалении задачи', {
         position: 'top-center',
         autoClose: 3000,
@@ -525,8 +525,8 @@ const Work = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <WorkContainer>
-      <PageTitle variant="h5">Рабочие задачи</PageTitle>
+    <WeeklyContainer>
+      <PageTitle variant="h5">Недельные задачи</PageTitle>
 
       <TaskForm>
         <FormGrid>
@@ -592,8 +592,8 @@ const Work = () => {
       <TasksContainer>
         {tasks.length === 0 && !loading && (
           <EmptyState>
-            <Typography variant="h6">Нет рабочих задач</Typography>
-            <Typography>Добавьте первую задачу, чтобы начать планирование своей работы</Typography>
+            <Typography variant="h6">Нет недельных задач</Typography>
+            <Typography>Добавьте первую задачу, чтобы начать планирование на неделю</Typography>
           </EmptyState>
         )}
 
@@ -622,8 +622,8 @@ const Work = () => {
           </TaskCard>
         ))}
       </TasksContainer>
-    </WorkContainer>
+    </WeeklyContainer>
   );
 };
 
-export default Work;
+export default Weekly;
